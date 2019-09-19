@@ -13,15 +13,37 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by SongLiang on 2019-09-19
  */
 @Controller
+@RequestMapping("/mq")
 public class SampleController {
 
     @Autowired
     MQSender sender;
 
-    @RequestMapping("/mq/{msg}")
+    @RequestMapping("/direct/{msg}")
     @ResponseBody
-    public ResultVO mq(@PathVariable("msg") String message) {
+    public ResultVO direct(@PathVariable("msg") String message) {
         sender.send(message);
+        return ResultVOUtil.success("hello world");
+    }
+
+    @RequestMapping("/topic/{msg}")
+    @ResponseBody
+    public ResultVO topic(@PathVariable("msg") String message) {
+        sender.sendTopic(message);
+        return ResultVOUtil.success("hello world");
+    }
+
+    @RequestMapping("/fanout/{msg}")
+    @ResponseBody
+    public ResultVO fanout(@PathVariable("msg") String message) {
+        sender.sendFanout(message);
+        return ResultVOUtil.success("hello world");
+    }
+
+    @RequestMapping("/header/{msg}")
+    @ResponseBody
+    public ResultVO header(@PathVariable("msg") String message) {
+        sender.sendFanout(message);
         return ResultVOUtil.success("hello world");
     }
 
