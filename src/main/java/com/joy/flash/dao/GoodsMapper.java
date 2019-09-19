@@ -22,6 +22,6 @@ public interface GoodsMapper {
     @Select("select a.*,b.miaosha_price as miaoshaPrice, b.stock_count as stockCount, b.start_date as startDate, b.end_date as endDate from goods as a, miaosha_goods as b where a.id = b.goods_id and a.id = #{goodId}")
     GoodsVO getGoodsVOByGoodsId(Long goodId);
 
-    @Update("update miaosha_goods set stock_count = stock_count - 1 where goods_id = #{goodsId}")
+    @Update("update miaosha_goods set stock_count = stock_count - 1 where goods_id = #{goodsId} and stock_count > 0")
     void reduceStock(MiaoshaGoods g);
 }

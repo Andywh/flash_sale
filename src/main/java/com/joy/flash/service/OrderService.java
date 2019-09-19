@@ -5,6 +5,7 @@ import com.joy.flash.dao.OrderMapper;
 import com.joy.flash.model.MiaoshaOrder;
 import com.joy.flash.model.MiaoshaUser;
 import com.joy.flash.model.OrderInfo;
+import com.joy.flash.redis.OrderKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,12 @@ public class OrderService {
     @Autowired
     OrderMapper orderMapper;
 
+    @Autowired
+    RedisService redisService;
+
     public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(Long userId, long goodsId) {
-        return orderMapper.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
+//        return orderMapper.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
+        return redisService.get(OrderKey.getMiaoshaOrderByUidGid, "" + userId+"_"+goodsId, MiaoshaOrder.class);
     }
 
     @Transactional
@@ -44,7 +49,11 @@ public class OrderService {
         miaoshaOrder.setOrderId(orderInfo.getId());
         miaoshaOrder.setUserId(user.getId());
         orderMapper.insertMiaoshaOrder(miaoshaOrder);
+        redisService.set(OrderKey.getMiaoshaOrderByUidGid, "" + user.getId()+"_"+goods.getId(), miaoshaOrder);
         return orderInfo;
     }
 
+    public OrderInfo getOrderById(long orderId) {
+        return orderMapper.getOrderById(orderId);
+    }
 }

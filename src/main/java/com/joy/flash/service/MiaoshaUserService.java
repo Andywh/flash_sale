@@ -9,6 +9,7 @@ import com.joy.flash.redis.MiaoshaUserKey;
 import com.joy.flash.utils.MD5Util;
 import com.joy.flash.utils.UUIDUtil;
 import com.joy.flash.utils.ValidatorUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by SongLiang on 2019-09-09
  */
+@Slf4j
 @Service
 public class MiaoshaUserService {
 
@@ -40,7 +42,7 @@ public class MiaoshaUserService {
         user = miaoshaUserMapper.getById(id);
         if (user != null) {
             // 存 redis
-            redisService.set(MiaoshaUserKey.getById, ""+id, MiaoshaUser.class);
+            redisService.set(MiaoshaUserKey.getById, ""+id, user);
         }
         return user;
     }
@@ -64,17 +66,22 @@ public class MiaoshaUserService {
     }
 
     public String login(HttpServletResponse response, LoginVO loginVO) {
+        log.info("login...");
+        log.info("loginVO: {}", loginVO);
         if (loginVO == null) {
+            log.info("loginVO == null");
             throw new GlobalException(ResultEnum.SESSION_ERROR);
         }
         // 参数校验
         String formPass = loginVO.getPassword();
         String mobile = loginVO.getMobile();
+        log.info("formPass: {}, mobile: {}", formPass, mobile);
         if (StringUtils.isEmpty(formPass)) {
-
+            log.info("formPass is empty");
             throw new GlobalException(ResultEnum.PASSWORD_EMPTY);
         }
         if (StringUtils.isEmpty(mobile)) {
+            log.info("mobile is empty");
             throw new GlobalException(ResultEnum.MOBILE_EMPTY);
         }
         if (!ValidatorUtil.isMobile(mobile)) {
@@ -82,8 +89,11 @@ public class MiaoshaUserService {
         }
 
         // 判断手机号是否存在
+        log.info("user");
         MiaoshaUser user = getById(Long.parseLong(mobile));
+        log.info("user user: {}", user);
         if (user == null) {
+            log.info("user is null, mobile: {}", mobile);
             throw new GlobalException(ResultEnum.MOBILE_NOT_EXIST);
         }
         // 验证密码
@@ -95,6 +105,7 @@ public class MiaoshaUserService {
         }
         // 生成 cookie
         String token = UUIDUtil.uuid();
+        log.info("token: {}", token);
         redisService.set(MiaoshaUserKey.token, token, user);
         addCookie(response, token, user);
         return token;

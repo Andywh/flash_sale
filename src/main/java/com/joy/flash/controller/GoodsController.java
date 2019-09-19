@@ -1,10 +1,13 @@
 package com.joy.flash.controller;
 
+import com.joy.flash.VO.GoodsDetailVO;
 import com.joy.flash.VO.GoodsVO;
+import com.joy.flash.VO.ResultVO;
 import com.joy.flash.model.MiaoshaUser;
 import com.joy.flash.service.GoodsService;
 import com.joy.flash.service.MiaoshaUserService;
 import com.joy.flash.service.RedisService;
+import com.joy.flash.utils.ResultVOUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,8 +45,38 @@ public class GoodsController {
         return "goods_list";
     }
 
-    @RequestMapping(value = "/to_detail/{goodsId}")
-    public String toDetail(Model model, MiaoshaUser user,
+    @RequestMapping(value = "/detail/{goodsId}")
+    @ResponseBody
+    public ResultVO toDetail(Model model, MiaoshaUser user,
+                             @PathVariable("goodsId") long goodsId) {
+        GoodsVO goods = goodsService.getGoodsVOByGoodsId(goodsId);
+        //
+        long startAt = goods.getStartDate().getTime();
+        long endAt = goods.getEndDate().getTime();
+        long now = System.currentTimeMillis();
+
+        int miaoshaStatus = 0;
+        int remainSeconds = 0;
+
+        if (now < startAt) { // 秒杀还没开始，
+            miaoshaStatus = 0;
+            remainSeconds = (int)((startAt - now) / 1000);
+        } else if (now > endAt) { // 秒杀已经结束
+            miaoshaStatus = 2;
+            remainSeconds = -1;
+        } else { // 秒杀进行中
+            miaoshaStatus = 1;
+            remainSeconds = 0;
+        }
+        GoodsDetailVO goodsDetailVO = new GoodsDetailVO();
+        goodsDetailVO.setMiaoshaStatus(miaoshaStatus);
+        goodsDetailVO.setRemainSeconds(remainSeconds);
+        goodsDetailVO.setGoods(goods);
+        return ResultVOUtil.success(goodsDetailVO);
+    }
+
+    @RequestMapping(value = "/to_detail2/{goodsId}")
+    public String toDetail2(Model model, MiaoshaUser user,
     @PathVariable("goodsId") long goodsId) {
         log.info("/detail/{goodsId}");
         GoodsVO goods = goodsService.getGoodsVOByGoodsId(goodsId);
