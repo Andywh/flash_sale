@@ -52,7 +52,6 @@ public class OrderService {
         redisService.set(OrderKey.getMiaoshaOrderByUidGid, "" + user.getId()+"_"+goods.getId(), miaoshaOrder);
         return orderInfo;
     }
-
     public OrderInfo getOrderById(long orderId) {
         return orderMapper.getOrderById(orderId);
     }

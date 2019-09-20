@@ -38,7 +38,6 @@ public class OrderController {
     @ResponseBody
     public ResultVO info(Model model, MiaoshaUser user,
                          @RequestParam("orderId") long orderId) {
-        log.info("order detail");
         if (user == null) {
             return ResultVOUtil.error(ResultEnum.SESSION_ERROR);
         }

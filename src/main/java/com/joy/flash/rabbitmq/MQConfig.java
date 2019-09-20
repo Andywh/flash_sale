@@ -14,6 +14,7 @@ import java.util.Map;
 @Configuration
 public class MQConfig {
 
+    public static final String MIAOSHA_QUEUE = "miaosha.queue";
     public static final String QUEUE = "queue";
     public static final String TOPIC_QUEUE1 = "topic.queue1";
     public static final String TOPIC_QUEUE2 = "topic.queue2";
@@ -101,5 +102,12 @@ public class MQConfig {
         return BindingBuilder.bind(headerQueue1()).to(headersExchange()).whereAll(map).match();
     }
 
+    /**
+     * 秒杀 quque
+     */
+    @Bean
+    public Queue miaoshaQueue() {
+        return new Queue(MQConfig.MIAOSHA_QUEUE, true);
+    }
 
 }

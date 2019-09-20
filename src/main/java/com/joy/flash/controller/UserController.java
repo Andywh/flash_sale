@@ -26,7 +26,6 @@ public class UserController {
     @ResponseBody
     public ResultVO<MiaoshaUser> info(Model model, MiaoshaUser user) {
         model.addAttribute("user", user);
-        log.info("user: {}", user);
         return ResultVOUtil.success(user);
     }
 

@@ -66,22 +66,16 @@ public class MiaoshaUserService {
     }
 
     public String login(HttpServletResponse response, LoginVO loginVO) {
-        log.info("login...");
-        log.info("loginVO: {}", loginVO);
         if (loginVO == null) {
-            log.info("loginVO == null");
             throw new GlobalException(ResultEnum.SESSION_ERROR);
         }
         // 参数校验
         String formPass = loginVO.getPassword();
         String mobile = loginVO.getMobile();
-        log.info("formPass: {}, mobile: {}", formPass, mobile);
         if (StringUtils.isEmpty(formPass)) {
-            log.info("formPass is empty");
             throw new GlobalException(ResultEnum.PASSWORD_EMPTY);
         }
         if (StringUtils.isEmpty(mobile)) {
-            log.info("mobile is empty");
             throw new GlobalException(ResultEnum.MOBILE_EMPTY);
         }
         if (!ValidatorUtil.isMobile(mobile)) {
@@ -89,9 +83,7 @@ public class MiaoshaUserService {
         }
 
         // 判断手机号是否存在
-        log.info("user");
         MiaoshaUser user = getById(Long.parseLong(mobile));
-        log.info("user user: {}", user);
         if (user == null) {
             log.info("user is null, mobile: {}", mobile);
             throw new GlobalException(ResultEnum.MOBILE_NOT_EXIST);
@@ -105,7 +97,6 @@ public class MiaoshaUserService {
         }
         // 生成 cookie
         String token = UUIDUtil.uuid();
-        log.info("token: {}", token);
         redisService.set(MiaoshaUserKey.token, token, user);
         addCookie(response, token, user);
         return token;

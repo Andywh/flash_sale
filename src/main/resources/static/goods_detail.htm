@@ -63,16 +63,18 @@
 <!--        		<input type="hidden" name="goodsId"  id="goodsId" />-->
 <!--        	</form>-->
 
-<!--        	<div class="row">-->
-<!--        		<div class="form-inline">-->
+        	<div class="row">
+        		<div class="form-inline">
 <!--		        	<img id="verifyCodeImg" width="80" height="32"  style="display:none" onclick="refreshVerifyCode()"/>-->
 <!--		        	<input id="verifyCode"  class="form-control" style="display:none"/>-->
-<!--		        	<button class="btn btn-primary" type="button" id="buyButton"onclick="getMiaoshaPath()">立即秒杀</button>-->
-<!--        		</div>-->
-<!--        	</div>-->
+		        	<button class="btn btn-primary" type="button" id="buyButton"onclick="getMiaoshaPath()">立即秒杀</button>
+                    <input type="hidden" name="goodsId"  id="goodsId" />
+
+                </div>
+        	</div>
 <!--        	<input type="hidden" name="goodsId"  id="goodsId" />-->
-            <button class="btn btn-primary btn-block" type="submit" id="buyButton" onclick="doMiaosha(123)">立即秒杀</button>
-        	<input type="hidden" name="goodsId"  id="goodsId" />
+<!--            <button class="btn btn-primary btn-block" type="submit" id="buyButton" onclick="doMiaosha(123)">立即秒杀</button>-->
+<!--        	<input type="hidden" name="goodsId"  id="goodsId" />-->
         </td>
      </tr>
      <tr>  
@@ -105,6 +107,7 @@ function getMiaoshaPath(){
 		success:function(data){
 			if(data.code == 0){
 				var path = data.data;
+				console.log("path,", path)
 				doMiaosha(path);
 			}else{
 				layer.msg(data.msg);
@@ -125,7 +128,8 @@ function getMiaoshaResult(goodsId){
 			goodsId:$("#goodsId").val(),
 		},
 		success:function(data){
-			if(data.code == 0){
+            console.log("秒杀结果 success", data)
+            if(data.code == 0){
 				var result = data.data;
 				if(result < 0){
 					layer.msg("对不起，秒杀失败");
@@ -134,13 +138,14 @@ function getMiaoshaResult(goodsId){
 						getMiaoshaResult(goodsId);
 					}, 200);
 				}else{
-					layer.confirm("恭喜你，秒杀成功！查看订单？", {btn:["确定","取消"]},
-							function(){
-								window.location.href="/order_detail.htm?orderId="+result;
-							},
-							function(){
-								layer.closeAll();
-							});
+                    console.log("恭喜你，秒杀成功！查看订单")
+                    layer.confirm("恭喜你，秒杀成功！查看订单？", {btn:["确定","取消"]},
+                    function(){
+                        window.location.href="/order_detail.htm?orderId="+result;
+                    },
+                    function(){
+                        layer.closeAll();
+                    });
 				}
 			}else{
 				layer.msg(data.msg);
@@ -154,16 +159,19 @@ function getMiaoshaResult(goodsId){
 
 function doMiaosha(path){
 	$.ajax({
-		// url:"/miaosha/"+path+"/do_miaosha",
-		url:"/miaosha/do_miaosha",
+		url:"/miaosha/"+path+"/do_miaosha",
+		// url:"/miaosha/do_miaosha",
 		type:"POST",
 		data:{
 			goodsId:$("#goodsId").val()
 		},
 		success:function(data){
 		    console.log("doMiaoshaSuccess")
+            console.log("data", data)
 			if(data.code == 0){
-				window.location.href="/order_detail.htm?orderId="+data.data.id;
+				// window.location.href="/order_detail.htm?orderId="+data.data.id;
+                console.log("开始请求秒杀结果")
+                console.log($("#goodsId").val())
 				getMiaoshaResult($("#goodsId").val());
 			}else{
 				layer.msg(data.msg);

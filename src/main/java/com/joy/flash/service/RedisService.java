@@ -72,22 +72,15 @@ public class RedisService {
      * 判断 key 是否存在
      * @param prefix
      * @param key
-     * @param value
-     * @param <T>
      * @return
      */
-    public <T> boolean exist(RedisKeyPrefix prefix, String key, T value) {
+    public boolean exist(RedisKeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String str = beanToString(value);
-            if (str == null || str.length() <= 0) {
-                return false;
-            }
             // 生成真正的 key
             String realKey = prefix.getPrefix() + key;
-            jedis.set(realKey, str);
-            return true;
+            return jedis.exists(realKey);
         } finally {
             returnToPool(jedis);
         }

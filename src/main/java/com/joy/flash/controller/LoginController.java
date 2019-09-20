@@ -28,7 +28,6 @@ public class LoginController {
 
     @RequestMapping("/to_login")
     public String toLogin() {
-        log.info("to_login");
         return "login";
     }
 

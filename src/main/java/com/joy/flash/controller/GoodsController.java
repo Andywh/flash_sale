@@ -39,7 +39,6 @@ public class GoodsController {
     public String list(HttpServletRequest request, HttpServletResponse response,
                        Model model, MiaoshaUser user) {
         model.addAttribute("user", user);
-        log.info("user: {}", user);
         List<GoodsVO> goodsVOList = goodsService.getGoodsVOList();
         model.addAttribute("goodsList", goodsVOList);
         return "goods_list";
@@ -78,9 +77,7 @@ public class GoodsController {
     @RequestMapping(value = "/to_detail2/{goodsId}")
     public String toDetail2(Model model, MiaoshaUser user,
     @PathVariable("goodsId") long goodsId) {
-        log.info("/detail/{goodsId}");
         GoodsVO goods = goodsService.getGoodsVOByGoodsId(goodsId);
-        log.info("goods detail: {}", goods);
         model.addAttribute("goods", goods);
         model.addAttribute("user", user);
         //
@@ -101,7 +98,6 @@ public class GoodsController {
             miaoshaStatus = 1;
             remainSeconds = 0;
         }
-        log.info("before return");
         model.addAttribute("miaoshaStatus", miaoshaStatus);
         model.addAttribute("remainSeconds", remainSeconds);
 
