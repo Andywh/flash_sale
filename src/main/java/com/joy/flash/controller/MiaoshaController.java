@@ -153,10 +153,10 @@ public class MiaoshaController implements InitializingBean {
         // 查询访问的次数
 //        String uri = request.getRequestURI();
 //        String key = uri + "_" + user.getId();
-        return ResultVOUtil.error(ResultEnum.BIND_ERROR);
+//        return ResultVOUtil.error(ResultEnum.BIND_ERROR);
 
-//        String path = miaoshaService.createMiaoshaPath(user, goodsId);
-//        return ResultVOUtil.success(path);
+        String path = miaoshaService.createMiaoshaPath(user, goodsId);
+        return ResultVOUtil.success(path);
     }
 
 }
